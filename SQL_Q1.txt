@@ -1,0 +1,6 @@
+SELECT employee_id, first_name, last_name, department_name, salary, diff FROM
+(SELECT *, SUM(CASE WHEN rnk=1 THEN salary ELSE -salary END) AS diff
+FROM (SELECT * FROM (SELECT *, RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) rnk
+FROM employees)
+WHERE rnk IN (1, 2))
+GROUP BY department_id)  AS t JOIN departments ON (t.department_id=departments.department_id)
